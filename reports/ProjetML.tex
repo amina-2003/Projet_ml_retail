@@ -1,0 +1,124 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{amssymb}  
+
+
+\geometry{margin=2cm}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Atelier Machine Learning}
+\lhead{Analyse Comportementale Clientèle}
+\rfoot{Page \thepage}
+
+% Couleurs personnalisées
+\definecolor{headerblue}{RGB}{41, 65, 114}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+\definecolor{accentorange}{RGB}{230, 126, 34}
+\definecolor{codegreen}{RGB}{0,128,0}
+\definecolor{codegray}{RGB}{128,128,128}
+\definecolor{codepurple}{RGB}{128,0,128}
+\definecolor{backcolour}{RGB}{248,248,248}
+\definecolor{warningred}{RGB}{231, 76, 60}
+\definecolor{successgreen}{RGB}{46, 204, 113}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codepurple},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codegreen},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+
+\tcbset{
+    colback=backcolour,
+    colframe=headerblue,
+    fonttitle=\bfseries,
+    boxrule=1pt,
+    arc=3mm
+}
+
+
+\titleformat{\section}
+{\color{headerblue}\normalfont\Large\bfseries}
+{\thesection}{1em}{}[{\titlerule[2pt]}]
+
+\titleformat{\subsection}
+{\color{accentorange}\normalfont\large\bfseries}
+{\thesubsection}{1em}{}
+
+% Définition de colonnes personnalisées
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\begin{document}
+
+
+\begin{titlepage}
+\begin{tikzpicture}[remember picture,overlay]
+    \fill[headerblue] (current page.north west) rectangle ([yshift=-5cm]current page.north east);
+    \node[anchor=north west, xshift=2cm, yshift=-2cm, text=white] at (current page.north west) 
+        {\Huge\textbf{Atelier Machine Learning}};
+    \node[anchor=north west, xshift=2cm, yshift=-3.5cm, text=white] at (current page.north west) 
+        {\Large\textit{Analyse Comportementale Clientèle Retail}};
+\end{tikzpicture}
+
+\vspace{6cm}
+
+\begin{center}
+{\LARGE\textbf{COMPTE RENDU}}\par
+\vspace{1cm}
+{\large Atelier Pratique : E-commerce de Cadeaux}\par
+\vspace{2cm}
+{\large \textbf{Préparé par XXXX}}
+\vspace{3cm}
+
+\begin{tikzpicture}
+    \draw[headerblue, line width=2pt] (0,0) -- (10,0);
+\end{tikzpicture}
+
+\vspace{2cm}
+
+
+
+\vspace{5cm}
+
+{\textbf{Année Univeristaire : 2025-2026}}
+
+\end{center}
+\vfill
+\end{titlepage}
+
+\section{...}
+
+
+\end{document}

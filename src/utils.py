@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 utils.py — Fonctions utilitaires pour le projet Churn
 Chargement des données + affichage des infos de base
@@ -174,3 +175,18 @@ def load_train_test(data_dir: str = 'data/train_test') -> tuple:
     except Exception as e:
         print(f"❌ Erreur chargement train/test : {e}")
         return None, None, None, None
+=======
+import pandas as pd
+
+def load_data(file_path):
+    """
+    Charge le dataset CSV et affiche les dimensions de base.
+    """
+    try:
+        df = pd.read_csv(file_path)
+        print(f" Chargement réussi : {df.shape[0]} lignes et {df.shape[1]} colonnes.")
+        return df
+    except Exception as e:
+        print(f" Erreur lors du chargement du fichier : {e}")
+        return None
+>>>>>>> 2898c7d (Add LaTeX report template and update utility functions)

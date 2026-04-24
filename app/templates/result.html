@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChurnSight — Résultat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:      #ffffff;
+      --gray-50:    #f8f9fa;
+      --gray-100:   #f1f3f5;
+      --gray-200:   #e9ecef;
+      --gray-300:   #dee2e6;
+      --gray-400:   #ced4da;
+      --gray-500:   #adb5bd;
+      --gray-600:   #6c757d;
+      --gray-700:   #495057;
+      --gray-800:   #343a40;
+      --gray-900:   #212529;
+      --blue-50:    #e7f0fb;
+      --blue-500:   #2d7dd2;
+      --blue-600:   #1d6cbf;
+      --red-50:     #fff0f0;
+      --red-200:    #fca5a5;
+      --red-500:    #ef4444;
+      --red-700:    #b91c1c;
+      --green-50:   #f0fdf4;
+      --green-200:  #a7f3d0;
+      --green-500:  #22c55e;
+      --green-700:  #15803d;
+      --amber-50:   #fffbeb;
+      --amber-200:  #fde68a;
+      --amber-500:  #f59e0b;
+      --amber-700:  #b45309;
+      --orange-50:  #fff7ed;
+      --orange-200: #fed7aa;
+      --orange-500: #f97316;
+      --orange-700: #c2410c;
+      --font: 'IBM Plex Sans', system-ui, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+    }
+
+    body {
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--gray-800);
+      background: var(--gray-50);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .logo {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-900);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-badge {
+      background: var(--blue-500);
+      color: white;
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+    }
+    nav { display: flex; gap: 4px; }
+    nav a {
+      color: var(--gray-600);
+      text-decoration: none;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      transition: background .15s, color .15s;
+    }
+    nav a:hover { background: var(--gray-100); color: var(--gray-900); }
+    nav a.active { background: var(--blue-50); color: var(--blue-600); font-weight: 500; }
+
+    /* LAYOUT */
+    .page-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* VERDICT CARD */
+    .verdict-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid;
+      padding: 2rem;
+      margin-bottom: 1.25rem;
+      animation: fadeUp .35s ease both;
+    }
+    .verdict-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .verdict-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .verdict-titles {}
+    .verdict-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 3px;
+    }
+    .verdict-main {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    /* GAUGE */
+    .gauge-block {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .gauge-bar-wrap { flex: 1; min-width: 160px; }
+    .gauge-track {
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .gauge-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width .8s cubic-bezier(.4,0,.2,1);
+    }
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--gray-400);
+    }
+    .gauge-pct {
+      font-family: var(--mono);
+      font-size: 2rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .gauge-sub {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    /* RISK BADGE */
+    .risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 1.25rem;
+      border: 1px solid;
+    }
+    .risk-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* COLOR THEMES */
+    .theme-red    { background: var(--red-50);    border-color: var(--red-200);    }
+    .theme-orange { background: var(--orange-50); border-color: var(--orange-200); }
+    .theme-amber  { background: var(--amber-50);  border-color: var(--amber-200);  }
+    .theme-green  { background: var(--green-50);  border-color: var(--green-200);  }
+
+    .theme-red    .verdict-label,
+    .theme-red    .gauge-pct      { color: var(--red-700);    }
+    .theme-orange .verdict-label,
+    .theme-orange .gauge-pct      { color: var(--orange-700); }
+    .theme-amber  .verdict-label,
+    .theme-amber  .gauge-pct      { color: var(--amber-700);  }
+    .theme-green  .verdict-label,
+    .theme-green  .gauge-pct      { color: var(--green-700);  }
+
+    .theme-red    .verdict-icon { background: var(--red-200);    }
+    .theme-orange .verdict-icon { background: var(--orange-200); }
+    .theme-amber  .verdict-icon { background: var(--amber-200);  }
+    .theme-green  .verdict-icon { background: var(--green-200);  }
+
+    .badge-red    { color: var(--red-700);    background: var(--red-50);    border-color: var(--red-200);    }
+    .badge-orange { color: var(--orange-700); background: var(--orange-50); border-color: var(--orange-200); }
+    .badge-amber  { color: var(--amber-700);  background: var(--amber-50);  border-color: var(--amber-200);  }
+    .badge-green  { color: var(--green-700);  background: var(--green-50);  border-color: var(--green-200);  }
+
+    /* CARDS */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-500);
+      margin-bottom: 1rem;
+    }
+
+    /* RECO LIST */
+    .reco-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .reco-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+    .reco-arrow {
+      color: var(--blue-500);
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* DATA GRID */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px 16px;
+    }
+    .data-item .d-label {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-bottom: 2px;
+    }
+    .data-item .d-value {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-800);
+    }
+
+    /* ERROR */
+    .error-card {
+      background: var(--red-50);
+      border: 1px solid var(--red-200);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .error-icon { font-size: 18px; flex-shrink: 0; }
+    .error-title { font-weight: 600; color: var(--red-700); margin-bottom: 4px; font-size: 15px; }
+    .error-msg   { font-size: 13px; color: var(--red-700); }
+
+    /* ACTIONS */
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      height: 38px;
+      padding: 0 20px;
+      border-radius: var(--radius-md);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: background .15s, border-color .15s;
+    }
+    .btn-primary {
+      background: var(--blue-500);
+      color: white;
+      border: 1px solid var(--blue-500);
+    }
+    .btn-primary:hover { background: var(--blue-600); border-color: var(--blue-600); }
+    .btn-secondary {
+      background: var(--white);
+      color: var(--gray-700);
+      border: 1px solid var(--gray-300);
+    }
+    .btn-secondary:hover { background: var(--gray-100); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 0 1rem; }
+      .page-wrap { padding: 1.25rem 1rem 3rem; }
+      .card { padding: 1.25rem; }
+      .gauge-block { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    ChurnSight
+    <span class="logo-badge">XGBoost</span>
+  </div>
+  <nav>
+    <a href="/">Prédiction</a>
+    <a href="/dashboard">Dashboard</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+
+  {% if result.get('error') %}
+
+  <!-- ERREUR -->
+  <div class="error-card">
+    <span class="error-icon">⚠</span>
+    <div>
+      <div class="error-title">Erreur de prédiction</div>
+      <div class="error-msg">{{ result.error }}</div>
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- VERDICT -->
+  {% set prob = result.probability %}
+  {% if result.prediction == 1 %}
+    {% if prob >= 75 %}
+      {% set theme = 'red' %}{% set risk_label = 'Risque critique' %}
+    {% elif prob >= 50 %}
+      {% set theme = 'orange' %}{% set risk_label = 'Risque élevé' %}
+    {% else %}
+      {% set theme = 'amber' %}{% set risk_label = 'Risque moyen' %}
+    {% endif %}
+  {% else %}
+    {% set theme = 'green' %}{% set risk_label = 'Risque faible' %}
+  {% endif %}
+
+  <div class="verdict-card theme-{{ theme }}">
+    <div class="verdict-header">
+      <div class="verdict-icon">
+        {{ '⚠' if result.prediction == 1 else '✓' }}
+      </div>
+      <div class="verdict-titles">
+        <div class="verdict-label">{{ 'Client à risque' if result.prediction == 1 else 'Client fidèle' }}</div>
+        <div class="verdict-main">{{ result.label }}</div>
+      </div>
+    </div>
+
+    <div class="gauge-block">
+      <div class="gauge-bar-wrap">
+        <div class="gauge-track">
+          <div class="gauge-fill" style="width: {{ result.probability }}%; background: {{ result.risk_color }};"></div>
+        </div>
+        <div class="gauge-labels">
+          <span>0%</span>
+          <span>Probabilité de churn</span>
+          <span>100%</span>
+        </div>
+      </div>
+      <div>
+        <div class="gauge-pct">{{ result.probability }}%</div>
+        <div class="gauge-sub">probabilité de départ</div>
+      </div>
+    </div>
+
+    <div class="risk-badge badge-{{ theme }}">
+      <span class="risk-dot"></span>
+      {{ result.risk_level }}
+    </div>
+  </div>
+
+  <!-- RECOMMANDATIONS -->
+  <div class="card">
+    <div class="card-title">Recommandations</div>
+    <ul class="reco-list">
+      {% if result.prediction == 1 %}
+        <li><span class="reco-arrow">→</span> Contacter ce client dans les 48 h avec une offre de rétention personnalisée.</li>
+        <li><span class="reco-arrow">→</span> Proposer une remise fidélité ou un avantage exclusif pour le réengager.</li>
+        <li><span class="reco-arrow">→</span> Analyser ses tickets support pour identifier la source d'insatisfaction.</li>
+        <li><span class="reco-arrow">→</span> Surveiller son activité sur les 30 prochains jours.</li>
+      {% else %}
+        <li><span class="reco-arrow">→</span> Client stable — maintenir la relation avec des communications régulières.</li>
+        <li><span class="reco-arrow">→</span> Proposer des produits complémentaires basés sur ses achats précédents.</li>
+        <li><span class="reco-arrow">→</span> Intégrer dans le programme de fidélité si ce n'est pas encore fait.</li>
+        <li><span class="reco-arrow">→</span> Surveiller si la récence commence à augmenter dans les prochains mois.</li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <!-- DONNÉES ANALYSÉES -->
+  {% if result.form_data %}
+  <div class="card">
+    <div class="card-title">Données analysées</div>
+    <div class="data-grid">
+      {% for key, val in result.form_data.items() %}
+        {% if val %}
+        <div class="data-item">
+          <div class="d-label">{{ key }}</div>
+          <div class="d-value">{{ val }}</div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% endif %}
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <a href="/" class="btn btn-primary">← Nouvelle prédiction</a>
+    <a href="/dashboard" class="btn btn-secondary">Voir le dashboard</a>
+  </div>
+
+</div>
+</body>
+</html>

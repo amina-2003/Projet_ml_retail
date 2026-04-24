@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+
+# Environnement virtuel
+venv/
+env/
+.env
+
+# Données (trop lourdes pour Git)
+data/train_test/
+data/processed/
+
+# Modèles sauvegardés (générés par main.py)
+models/*.pkl
+models/*.joblib
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask
+instance/

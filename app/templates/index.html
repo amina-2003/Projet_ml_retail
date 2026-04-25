@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChurnSight</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f6fa;
+      color: #111827;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo { font-size: 15px; font-weight: 600; }
+    .logo span { color: #4f6ef7; }
+    .tag {
+      font-size: 11px;
+      background: #eef2ff;
+      color: #4f6ef7;
+      padding: 2px 10px;
+      border-radius: 99px;
+      font-weight: 500;
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 20px 60px;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── LEFT: FORM ── */
+    .form-col h1 { font-size: 17px; font-weight: 600; margin-bottom: 3px; }
+    .form-col .sub { font-size: 12px; color: #6b7280; margin-bottom: 16px; }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .card-head {
+      padding: 9px 16px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      border-radius: 10px 10px 0 0;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+    .card-body { padding: 16px; }
+
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+    .f label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+    .f input, .f select {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 7px;
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      color: #111827;
+      background: #fff;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .f input:focus, .f select:focus {
+      border-color: #4f6ef7;
+      box-shadow: 0 0 0 3px rgba(79,110,247,.07);
+    }
+
+    .form-foot {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .foot-hint { font-size: 11px; color: #9ca3af; flex: 1; }
+    .btn-go {
+      background: #4f6ef7;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-go:hover { background: #3b5be5; }
+    .btn-go:disabled { background: #a5b4fc; cursor: not-allowed; }
+
+    /* ── RIGHT: RESULT ── */
+    .result-col {
+      position: sticky;
+      top: 20px;
+    }
+
+    .result-col .col-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .result-col .sub { font-size: 12px; color: #6b7280; margin-bottom: 16px; }
+
+    .result-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    /* empty state */
+    .empty-state {
+      padding: 48px 20px;
+      text-align: center;
+    }
+    .empty-icon {
+      width: 48px; height: 48px;
+      background: #f3f4f6;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 20px;
+      color: #d1d5db;
+    }
+    .empty-state p { font-size: 13px; color: #9ca3af; line-height: 1.6; }
+
+    /* result content */
+    #resultContent { display: none; }
+
+    .res-header {
+      padding: 16px;
+      border-bottom: 1px solid #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .res-dot {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .dot-churn { background: #fef2f2; color: #ef4444; }
+    .dot-safe  { background: #f0fdf4; color: #22c55e; }
+    .res-title { font-size: 15px; font-weight: 600; }
+    .res-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+    .res-body { padding: 16px; }
+
+    .prob-top { display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; margin-bottom: 5px; }
+    .bar { height: 5px; background: #f3f4f6; border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 99px; width: 0; transition: width .9s cubic-bezier(.4,0,.2,1); }
+    .prob-num { font-size: 28px; font-weight: 600; margin-top: 8px; line-height: 1; }
+    .prob-lbl { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 10px; border-radius: 99px;
+      margin-top: 8px;
+    }
+    .b-low    { background: #f0fdf4; color: #16a34a; }
+    .b-medium { background: #fffbeb; color: #d97706; }
+    .b-high   { background: #fef2f2; color: #dc2626; }
+
+    .sep { border: none; border-top: 1px solid #f3f4f6; margin: 14px 0; }
+    .sec-lbl { font-size: 10px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 8px; }
+
+    .reco { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .reco li { display: flex; gap: 7px; font-size: 12px; color: #374151; line-height: 1.5; }
+    .reco li::before { content: '›'; color: #4f6ef7; font-weight: 700; flex-shrink: 0; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { background: #f3f4f6; border-radius: 6px; padding: 4px 9px; font-size: 11px; color: #374151; }
+    .chip span { color: #9ca3af; margin-right: 3px; }
+
+    /* loading spinner */
+    .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Churn<span>Sight</span></div>
+  <span class="tag">XGBoost · ML</span>
+</header>
+
+<div class="layout">
+
+  <!-- ── LEFT: FORMULAIRE ── -->
+  <div class="form-col">
+    <h1>Détecteur de churn</h1>
+    <p class="sub">Renseignez les données client ci-dessous.</p>
+
+    <div class="card">
+      <div class="card-head">01 · Comportement & transactions</div>
+      <div class="card-body">
+        <div class="g2" style="margin-bottom:10px">
+          <div class="f"><label>Spending category</label>
+            <select id="SpendingCategory">
+              <option value="0">Low</option>
+              <option value="1">Medium</option>
+              <option value="2" selected>High</option>
+              <option value="3">VIP</option>
+            </select></div>
+          <div class="f"><label>Fréquence (nb commandes)</label>
+            <input type="number" id="Frequency" placeholder="ex: 12" min="0"></div>
+        </div>
+        <div class="g3">
+          <div class="f"><label>Total transactions</label>
+            <input type="number" id="TotalTransactions" placeholder="ex: 50" min="0"></div>
+          <div class="f"><label>Moy. jours entre achats</label>
+            <input type="number" id="AvgDaysBetweenPurchases" placeholder="ex: 30" min="0"></div>
+          <div class="f"><label>Montant total (€)</label>
+            <input type="number" id="MonetaryTotal" placeholder="ex: 1500" min="0" step="0.01"></div>
+          <div class="f"><label>Panier moyen (€)</label>
+            <input type="number" id="AvgBasketValue" placeholder="ex: 125" min="0" step="0.01"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">02 · Compte & profil</div>
+      <div class="card-body">
+        <div class="g3">
+          <div class="f"><label>Ancienneté compte (jours)</label>
+            <input type="number" id="AccountAgeDays" placeholder="ex: 365" min="0"></div>
+          <div class="f"><label>Nouveau client</label>
+            <select id="IsNewClient">
+              <option value="0">Non</option>
+              <option value="1">Oui</option>
+            </select></div>
+          <div class="f"><label>Diversité produits</label>
+            <select id="ProductDiversity">
+              <option value="0">Fidèle</option>
+              <option value="1" selected>Explorateur</option>
+              <option value="2">Mixte</option>
+            </select></div>
+          <div class="f"><label>Tickets support</label>
+            <input type="number" id="SupportTicketsCount" placeholder="ex: 2" min="0"></div>
+          <div class="f"><label>Genre</label>
+            <select id="Gender">
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+              <option value="U">Unknown</option>
+            </select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">03 · Temporalité & localisation</div>
+      <div class="card-body">
+        <div class="g3">
+          <div class="f"><label>Saison d'inscription</label>
+            <select id="RegSeason">
+              <option value="printemps">Printemps</option>
+              <option value="été">Été</option>
+              <option value="automne" selected>Automne</option>
+              <option value="hiver">Hiver</option>
+            </select></div>
+          <div class="f"><label>Mois inscription (1–12)</label>
+            <input type="number" id="RegMonth" placeholder="ex: 9" min="1" max="12"></div>
+          <div class="f"><label>Jour préféré</label>
+            <select id="PreferredDayOfWeek">
+              <option value="0">Lundi</option>
+              <option value="1">Mardi</option>
+              <option value="2">Mercredi</option>
+              <option value="3">Jeudi</option>
+              <option value="4" selected>Vendredi</option>
+              <option value="5">Samedi</option>
+              <option value="6">Dimanche</option>
+            </select></div>
+          <div class="f"><label>Préférence semaine</label>
+            <select id="WeekendPreference">
+              <option value="Semaine" selected>Semaine</option>
+              <option value="Weekend">Weekend</option>
+            </select></div>
+          <div class="f"><label>Région</label>
+            <input type="text" id="Region" placeholder="ex: Île-de-France"></div>
+          <div class="f"><label>Jour inscription (0=Lun…6=Dim)</label>
+            <input type="number" id="RegWeekday" placeholder="ex: 2" min="0" max="6"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-foot">
+      <p class="foot-hint">Modèle XGBoost · 20 features</p>
+      <button class="btn-go" id="btnPredict" onclick="predict()">
+        <span class="spinner" id="spinner"></span>
+        Analyser ce client →
+      </button>
+    </div>
+  </div>
+
+  <!-- ── RIGHT: RÉSULTAT ── -->
+  <div class="result-col">
+    <div class="col-title">Résultat</div>
+    <p class="sub">La prédiction apparaît ici.</p>
+
+    <div class="result-card">
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">◎</div>
+        <p>Remplissez le formulaire<br>et cliquez sur <strong>Analyser</strong>.</p>
+      </div>
+
+      <!-- Result content -->
+      <div id="resultContent">
+
+        <div class="res-header">
+          <div class="res-dot" id="resDot"></div>
+          <div>
+            <div class="res-title" id="resTitle"></div>
+            <div class="res-desc"  id="resDesc"></div>
+          </div>
+        </div>
+
+        <div class="res-body">
+          <div class="prob-top">
+            <span>Probabilité de churn</span>
+            <span id="probPct"></span>
+          </div>
+          <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+          <div class="prob-num" id="probNum"></div>
+          <div class="prob-lbl">de probabilité de départ</div>
+          <div><span class="badge" id="riskBadge"></span></div>
+
+          <hr class="sep">
+          <div class="sec-lbl">Recommandations</div>
+          <ul class="reco" id="recoList"></ul>
+
+          <hr class="sep">
+          <div class="sec-lbl">Données analysées</div>
+          <div class="chips" id="chips"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function g(id) { return document.getElementById(id)?.value || ''; }
+
+  async function predict() {
+    const sea = g('RegSeason');
+    const gen = g('Gender');
+
+    const payload = {
+      SpendingCategory:             g('SpendingCategory'),
+      Frequency:                    g('Frequency'),
+      AccountAgeDays:               g('AccountAgeDays'),
+      TotalTransactions:            g('TotalTransactions'),
+      RegSeason_automne:            sea === 'automne' ? 1 : 0,
+      RegSeason_été:                sea === 'été'     ? 1 : 0,
+      RegSeason_hiver:              sea === 'hiver'   ? 1 : 0,
+      IsNewClient:                  g('IsNewClient'),
+      ProductDiversity_Explorateur: g('ProductDiversity') === '1' ? 1 : 0,
+      AvgDaysBetweenPurchases:      g('AvgDaysBetweenPurchases'),
+      Gender_Unknown:               gen === 'U' ? 1 : 0,
+      Gender_F:                     gen === 'F' ? 1 : 0,
+      SupportTicketsCount:          g('SupportTicketsCount'),
+      PreferredDayOfWeek:           g('PreferredDayOfWeek'),
+      WeekendPreference_Semaine:    g('WeekendPreference') === 'Semaine' ? 1 : 0,
+      MonetaryTotal:                g('MonetaryTotal'),
+      RegMonth:                     g('RegMonth'),
+      Region:                       g('Region'),
+      AvgBasketValue:               g('AvgBasketValue'),
+      RegWeekday:                   g('RegWeekday'),
+    };
+
+    // Loading state
+    const btn = document.getElementById('btnPredict');
+    const spn = document.getElementById('spinner');
+    btn.disabled = true;
+    spn.style.display = 'inline-block';
+    btn.childNodes[1].textContent = ' Analyse en cours…';
+
+    try {
+      const res    = await fetch('/predict', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload)
+      });
+      const result = await res.json();
+
+      if (result.error) {
+        alert('Erreur : ' + result.error);
+        return;
+      }
+
+      const prob  = result.probability;
+      const churn = result.prediction === 1;
+
+      let fillColor, bClass, bText;
+      if (prob < 35)      { fillColor='#22c55e'; bClass='b-low';    bText='Risque faible'; }
+      else if (prob < 65) { fillColor='#f59e0b'; bClass='b-medium'; bText='Risque modéré'; }
+      else                { fillColor='#ef4444'; bClass='b-high';   bText='Risque élevé'; }
+
+      // Header
+      const dot = document.getElementById('resDot');
+      dot.textContent = churn ? '!' : '✓';
+      dot.className   = 'res-dot ' + (churn ? 'dot-churn' : 'dot-safe');
+      document.getElementById('resTitle').textContent = 'Churn : ' + (churn ? 'Oui' : 'Non');
+      document.getElementById('resDesc').textContent  = churn
+        ? 'Client à risque de départ.'
+        : 'Client stable et fidèle.';
+
+      // Probability bar
+      document.getElementById('probPct').textContent = prob + '%';
+      const num = document.getElementById('probNum');
+      num.textContent = prob + '%';
+      num.style.color = fillColor;
+
+      const fill = document.getElementById('barFill');
+      fill.style.background = fillColor;
+      fill.style.width = '0%';
+      setTimeout(() => { fill.style.width = prob + '%'; }, 50);
+
+      // Risk badge
+      const rb = document.getElementById('riskBadge');
+      rb.textContent = bText;
+      rb.className   = 'badge ' + bClass;
+
+      // Recommendations
+      const recoList = document.getElementById('recoList');
+      recoList.innerHTML = '';
+      (churn ? [
+        'Contacter ce client dans les 48h avec une offre de rétention personnalisée.',
+        'Proposer une remise fidélité ou un avantage exclusif pour le réengager.',
+        "Analyser ses tickets support pour identifier la source d'insatisfaction.",
+        'Surveiller son activité sur les 30 prochains jours.'
+      ] : [
+        'Client stable — maintenir la relation avec des communications régulières.',
+        'Proposer des produits complémentaires basés sur ses achats précédents.',
+        "Intégrer dans le programme de fidélité si ce n'est pas encore fait.",
+        'Surveiller si la récence commence à augmenter dans les prochains mois.'
+      ]).forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = t;
+        recoList.appendChild(li);
+      });
+
+      // Data chips
+      const chips = document.getElementById('chips');
+      chips.innerHTML = '';
+      [
+        ['Spending',      ['Low','Medium','High','VIP'][parseInt(g('SpendingCategory'))]],
+        ['Fréquence',     g('Frequency') + ' cmd'],
+        ['Ancienneté',    g('AccountAgeDays') + ' j'],
+        ['Transactions',  g('TotalTransactions')],
+        ['Support',       g('SupportTicketsCount') + ' tickets'],
+        ['Saison',        sea],
+        ['Panier moyen',  '€' + g('AvgBasketValue')],
+        ['Montant total', '€' + g('MonetaryTotal')],
+      ].forEach(([l, v]) => {
+        const c = document.createElement('div');
+        c.className = 'chip';
+        c.innerHTML = `<span>${l}</span>${v}`;
+        chips.appendChild(c);
+      });
+
+      // Show result, hide empty state
+      document.getElementById('emptyState').style.display   = 'none';
+      document.getElementById('resultContent').style.display = 'block';
+
+    } catch (err) {
+      alert('Erreur de connexion au serveur : ' + err.message);
+    } finally {
+      // Reset button
+      btn.disabled = false;
+      spn.style.display = 'none';
+      btn.childNodes[1].textContent = ' Analyser ce client →';
+    }
+  }
+</script>
+
+</body>
+</html>

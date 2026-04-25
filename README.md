@@ -78,7 +78,7 @@ ou indirectement la variable cible, ou sont redondantes :
 |--------|----------|---------|-------|-------|
 | Logistic Regression | 0.6649  | 0.8453 | 0.8257 |0.8866|
 | Random Forest | 0.6843 | 0.8738 | 0.8529 |0.8900|
-| **XGBoost** ← meilleur | **0.7316** | **0.8945** | **0.8651** |**0.8900**|
+| **XGBoost** ← meilleur | **0.7512** | **0.8947** | **0.8651** |**0.8500**|
 
 Le modèle final est sélectionné par comparaison entre la version GridSearchCV et la version optimisée Optuna (TPE Bayesian), en retenant celle avec le meilleur AUC-ROC.
 

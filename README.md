@@ -42,7 +42,7 @@ python main.py
 
 ### 2. Démarrer l'API Flask
 ```bash
-python src/predict.py
+python app/app.py
 # → http://localhost:5000/health
 # → http://localhost:5000/predict
 ```
